@@ -132,7 +132,14 @@ public class OpacityBar extends View {
 
 	public OpacityBar(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		init(attrs, 0);
+        if(!isInEditMode())
+        {
+		    init(attrs, 0);
+        }
+        else
+        {
+            editModeinit();
+        }
 	}
 
 	public OpacityBar(Context context, AttributeSet attrs, int defStyle) {
@@ -175,6 +182,29 @@ public class OpacityBar extends View {
 		mPosToOpacFactor = 0xFF / ((float) mBarLength);
 		mOpacToPosFactor = ((float) mBarLength) / 0xFF;
 	}
+
+    private void editModeinit() {
+        mBarThickness = 4;
+        mBarLength = 240;
+        mPreferredBarLength = mBarLength;
+        mBarPointerRadius = 6;
+        mBarPointerHaloRadius = 14;
+
+        mBarPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mBarPaint.setShader(shader);
+
+        mBarPointerPosition = mBarLength + mBarPointerHaloRadius;
+
+        mBarPointerHaloPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mBarPointerHaloPaint.setColor(Color.BLACK);
+        mBarPointerHaloPaint.setAlpha(0x50);
+
+        mBarPointerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mBarPointerPaint.setColor(0xff81ff00);
+
+        mPosToOpacFactor = 0xFF / ((float) mBarLength);
+        mOpacToPosFactor = ((float) mBarLength) / 0xFF;
+    }
 
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {

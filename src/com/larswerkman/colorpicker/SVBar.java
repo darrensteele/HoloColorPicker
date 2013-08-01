@@ -133,7 +133,14 @@ public class SVBar extends View {
 
 	public SVBar(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		init(attrs, 0);
+        if(!isInEditMode())
+        {
+		    init(attrs, 0);
+        }
+        else
+        {
+            editModeinit();
+        }
 	}
 
 	public SVBar(Context context, AttributeSet attrs, int defStyle) {
@@ -177,6 +184,29 @@ public class SVBar extends View {
 		mSVToPosFactor = ((float) mBarLength / 2) / 1;
 
 	}
+
+    private void editModeinit() {
+        mBarThickness = 4;
+        mBarLength = 240;
+        mPreferredBarLength = mBarLength;
+        mBarPointerRadius = 6;
+        mBarPointerHaloRadius = 14;
+
+        mBarPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mBarPaint.setShader(shader);
+
+        mBarPointerPosition = mBarLength + mBarPointerHaloRadius;
+
+        mBarPointerHaloPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mBarPointerHaloPaint.setColor(Color.BLACK);
+        mBarPointerHaloPaint.setAlpha(0x50);
+
+        mBarPointerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mBarPointerPaint.setColor(0xff81ff00);
+
+        mPosToSVFactor = 1 / ((float) mBarLength / 2);
+        mSVToPosFactor = ((float) mBarLength / 2) / 1;
+    }
 
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {

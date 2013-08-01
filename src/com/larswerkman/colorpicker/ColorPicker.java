@@ -220,7 +220,14 @@ public class ColorPicker extends View {
 
 	public ColorPicker(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		init(attrs, 0);
+        if(!isInEditMode())
+        {
+		    init(attrs, 0);
+        }
+        else
+        {
+            editModeinit();
+        }
 	}
 
 	public ColorPicker(Context context, AttributeSet attrs, int defStyle) {
@@ -258,63 +265,105 @@ public class ColorPicker extends View {
 	}
 
 	private void init(AttributeSet attrs, int defStyle) {
-		final TypedArray a = getContext().obtainStyledAttributes(attrs,
-				R.styleable.ColorPicker, defStyle, 0);
-		final Resources b = getContext().getResources();
+        final TypedArray a = getContext().obtainStyledAttributes(attrs,
+                R.styleable.ColorPicker, defStyle, 0);
+        final Resources b = getContext().getResources();
 
-		mColorWheelThickness = a.getDimensionPixelSize(
-				R.styleable.ColorPicker_color_wheel_thickness,
-				b.getDimensionPixelSize(R.dimen.color_wheel_thickness));
-		mColorWheelRadius = a.getDimensionPixelSize(
-				R.styleable.ColorPicker_color_wheel_radius,
-				b.getDimensionPixelSize(R.dimen.color_wheel_radius));
-		mPreferredColorWheelRadius = mColorWheelRadius;
-		mColorCenterRadius = a.getDimensionPixelSize(
-				R.styleable.ColorPicker_color_center_radius,
-				b.getDimensionPixelSize(R.dimen.color_center_radius));
-		mPreferredColorCenterRadius = mColorCenterRadius;
-		mColorCenterHaloRadius = a.getDimensionPixelSize(
-				R.styleable.ColorPicker_color_center_halo_radius,
-				b.getDimensionPixelSize(R.dimen.color_center_halo_radius));
-		mPreferredColorCenterHaloRadius = mColorCenterHaloRadius;
-		mColorPointerRadius = a.getDimensionPixelSize(
-				R.styleable.ColorPicker_color_pointer_radius,
-				b.getDimensionPixelSize(R.dimen.color_pointer_radius));
-		mColorPointerHaloRadius = a.getDimensionPixelSize(
-				R.styleable.ColorPicker_color_pointer_halo_radius,
-				b.getDimensionPixelSize(R.dimen.color_pointer_halo_radius));
+        mColorWheelThickness = a.getDimensionPixelSize(
+                R.styleable.ColorPicker_color_wheel_thickness,
+                b.getDimensionPixelSize(R.dimen.color_wheel_thickness));
+        mColorWheelRadius = a.getDimensionPixelSize(
+                R.styleable.ColorPicker_color_wheel_radius,
+                b.getDimensionPixelSize(R.dimen.color_wheel_radius));
+        mPreferredColorWheelRadius = mColorWheelRadius;
+        mColorCenterRadius = a.getDimensionPixelSize(
+                R.styleable.ColorPicker_color_center_radius,
+                b.getDimensionPixelSize(R.dimen.color_center_radius));
+        mPreferredColorCenterRadius = mColorCenterRadius;
+        mColorCenterHaloRadius = a.getDimensionPixelSize(
+                R.styleable.ColorPicker_color_center_halo_radius,
+                b.getDimensionPixelSize(R.dimen.color_center_halo_radius));
+        mPreferredColorCenterHaloRadius = mColorCenterHaloRadius;
+        mColorPointerRadius = a.getDimensionPixelSize(
+                R.styleable.ColorPicker_color_pointer_radius,
+                b.getDimensionPixelSize(R.dimen.color_pointer_radius));
+        mColorPointerHaloRadius = a.getDimensionPixelSize(
+                R.styleable.ColorPicker_color_pointer_halo_radius,
+                b.getDimensionPixelSize(R.dimen.color_pointer_halo_radius));
 
-		a.recycle();
+        a.recycle();
 
-		mAngle = (float) (-Math.PI / 2);
+        mAngle = (float) (-Math.PI / 2);
 
-		Shader s = new SweepGradient(0, 0, COLORS, null);
+        Shader s = new SweepGradient(0, 0, COLORS, null);
 
-		mColorWheelPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-		mColorWheelPaint.setShader(s);
-		mColorWheelPaint.setStyle(Paint.Style.STROKE);
-		mColorWheelPaint.setStrokeWidth(mColorWheelThickness);
+        mColorWheelPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mColorWheelPaint.setShader(s);
+        mColorWheelPaint.setStyle(Paint.Style.STROKE);
+        mColorWheelPaint.setStrokeWidth(mColorWheelThickness);
 
-		mPointerHaloPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-		mPointerHaloPaint.setColor(Color.BLACK);
-		mPointerHaloPaint.setAlpha(0x50);
+        mPointerHaloPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mPointerHaloPaint.setColor(Color.BLACK);
+        mPointerHaloPaint.setAlpha(0x50);
 
-		mPointerColor = new Paint(Paint.ANTI_ALIAS_FLAG);
-		mPointerColor.setColor(calculateColor(mAngle));
+        mPointerColor = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mPointerColor.setColor(calculateColor(mAngle));
 
-		mCenterNewPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-		mCenterNewPaint.setColor(calculateColor(mAngle));
-		mCenterNewPaint.setStyle(Paint.Style.FILL);
+        mCenterNewPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mCenterNewPaint.setColor(calculateColor(mAngle));
+        mCenterNewPaint.setStyle(Paint.Style.FILL);
 
-		mCenterOldPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-		mCenterOldPaint.setColor(calculateColor(mAngle));
-		mCenterOldPaint.setStyle(Paint.Style.FILL);
+        mCenterOldPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mCenterOldPaint.setColor(calculateColor(mAngle));
+        mCenterOldPaint.setStyle(Paint.Style.FILL);
 
-		mCenterHaloPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-		mCenterHaloPaint.setColor(Color.BLACK);
-		mCenterHaloPaint.setAlpha(0x00);
+        mCenterHaloPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mCenterHaloPaint.setColor(Color.BLACK);
+        mCenterHaloPaint.setAlpha(0x00);
 
-	}
+    }
+
+    private void editModeinit() {
+
+        mColorWheelThickness = 16;
+        mColorWheelRadius = 124;
+        mPreferredColorWheelRadius = mColorWheelRadius;
+        mColorCenterRadius = 54;
+        mPreferredColorCenterRadius = mColorCenterRadius;
+        mColorCenterHaloRadius = 60;
+        mPreferredColorCenterHaloRadius = mColorCenterHaloRadius;
+        mColorPointerRadius = 20;
+        mColorPointerHaloRadius = 24;
+
+        mAngle = (float) (-Math.PI / 2);
+
+        Shader s = new SweepGradient(0, 0, COLORS, null);
+
+        mColorWheelPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mColorWheelPaint.setShader(s);
+        mColorWheelPaint.setStyle(Paint.Style.STROKE);
+        mColorWheelPaint.setStrokeWidth(mColorWheelThickness);
+
+        mPointerHaloPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mPointerHaloPaint.setColor(Color.BLACK);
+        mPointerHaloPaint.setAlpha(0x50);
+
+        mPointerColor = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mPointerColor.setColor(calculateColor(mAngle));
+
+        mCenterNewPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mCenterNewPaint.setColor(calculateColor(mAngle));
+        mCenterNewPaint.setStyle(Paint.Style.FILL);
+
+        mCenterOldPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mCenterOldPaint.setColor(calculateColor(mAngle));
+        mCenterOldPaint.setStyle(Paint.Style.FILL);
+
+        mCenterHaloPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mCenterHaloPaint.setColor(Color.BLACK);
+        mCenterHaloPaint.setAlpha(0x00);
+
+    }
 
 	@Override
 	protected void onDraw(Canvas canvas) {
